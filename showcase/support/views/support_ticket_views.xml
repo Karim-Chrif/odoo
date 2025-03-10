@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_support_ticket_kanban" model="ir.ui.view">
+        <field name="name">support.ticket.kanban</field>
+        <field name="model">support.ticket</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" 
+                   class="o_kanban_small_column" 
+                   group_create="0" 
+                   group_delete="0"
+                   records_draggable="1">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="customer_id"/>
+                <field name="assignee_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                       <field name="customer_id"/>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <field name="priority" widget="priority"/>
+                                    </div>
+                                </div>
+                                <div class="row mt-2" t-if="record.assignee_id.raw_value">
+                                    <div class="col-12">
+                                        <small>Assigned to: <field name="assignee_id"/></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+                <progressbar field="state" colors='{"new": "success", "in_progress": "warning", "closed": "muted"}'/>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_support_ticket_kanban" model="ir.actions.act_window">
+        <field name="name">Support Tickets</field>
+        <field name="res_model">support.ticket</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="view_support_ticket_kanban"/>
+        <field name="context">{
+            'group_by': 'state',
+            'default_state': 'new',
+            'search_default_state': 'new'
+        }</field>
+        <field name="domain">[]</field>
+    </record>
+
+    <menuitem id="menu_support_ticket_kanban"
+              name="Support Tickets"
+              action="action_support_ticket_kanban"
+              sequence="10"/>
+</odoo>
